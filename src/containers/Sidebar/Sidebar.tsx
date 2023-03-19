@@ -12,7 +12,7 @@ interface ISidebarProps {
 
 export default function Sidebar({ setIsSidebarVisible }: ISidebarProps) {
   return (
-    <aside className="w-full h-full flex flex-col justify-start items-center bg-[var(--color-white)] border-l-[1px] border-[var(--color-dark)] " >
+    <aside className="shadow w-full h-full flex flex-col justify-start items-center bg-[var(--color-white)] border-l-[1px] border-[var(--color-dark)] " >
       <div className="w-[90%] flex justify-end mt-2" >
         <IoMdClose className="text-[1rem] text-[var(--color-dark)] cursor-pointer" onClick={() => setIsSidebarVisible(false)} />
       </div>

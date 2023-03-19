@@ -11,8 +11,8 @@ export default function Navbar() {
   const [isMenu, setIsMenu] = useState<boolean>(false)
 
   return (
-    <nav className="absolute top-0 left-0 w-full flex items-center justify-between py-6 px-6 xs:px-8 md:px-10" >
-      <h1 className="app__navbar-brand-text text-[1.5rem] xs:text-[1.65rem] sm:text-[1.75rem] md:text-[2rem] font-bold text-[var(--color-dark)]" >Shoe <span className="text-[var(--color-brand)]" >House</span></h1>
+    <nav className="absolute top-0 left-0 w-full flex items-center justify-between py-6 px-6 xs:px-8 md:px-10 backdrop-blur-sm bg-transparent" >
+      <h1 className="app__navbar-brand-text text-[1.5rem] xs:text-[1.65rem] sm:text-[1.75rem] md:text-[2rem] font-bold text-[var(--color-dark)] cursor-pointer" >Shoe <span className="text-[var(--color-brand)]" >House</span></h1>
       <ul className="hidden lg:flex items-center justify-center gap-10" >
         <div className="flex items-center justify-center gap-3 cursor-pointer" >
           <p className="app__navbar-text text-[1rem] text-[var(--color-grey)] hover:text-[var(--color-dark)]" >Our Services</p>
