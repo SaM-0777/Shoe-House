@@ -7,7 +7,7 @@ import { FaHeart } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { useDispatch, useSelector } from "react-redux";
-import { addItem, selectCartItems } from "../../store/slices/cartItemSlice";
+import { addItem, removeItem, selectCartItems } from "../../store/slices/cartItemSlice";
 
 import { Sidebar } from "../../containers";
 
@@ -64,14 +64,25 @@ export default function Home() {
   }
 
   function handleOnClickAddItem() {
-    cartItemDispatch(addItem({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      productImageUri: product.productImageUri,
-      quantity: 1
-    }))
-    setIsSidebarVisible(true)
+    if (itemsInCart.find(item => item.id === product.id)) {
+      cartItemDispatch(removeItem({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        productImageUri: product.productImageUri,
+        quantity: 1
+      }))
+    } else {
+      cartItemDispatch(addItem({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        productImageUri: product.productImageUri,
+        quantity: 1
+      }))
+      setIsSidebarVisible(true)
+    }
+    handleToggleLike()
   }
 
   return (
@@ -118,11 +129,11 @@ export default function Home() {
           </AnimatePresence>
         </div>
         <div className="flex items-center gap-2 md:gap-3" >
-          <div className="flex items-center justify-between w-3/4 md:w-1/2 py-2 px-2 rounded-lg bg-[var(--color-dark)] cursor-pointer" onClick={itemsInCart.find(item => item.id === product.id) ? () => setIsSidebarVisible(prevState => !prevState) : handleOnClickAddItem} >
+          <div className="flex items-center justify-between w-3/4 md:w-1/2 py-2 px-2 rounded-lg bg-[var(--color-dark)] cursor-pointer"  >
             <p className="app__home-tertiary-text text-[0.8rem] xs:text-[0.875rem] md:text-[0.6rem] lg:text-[0.85rem] font-regular text-[var(--color-white)] uppercase" >{itemsInCart.find(item => item.id === product.id) ? "Added to Cart" : "Add to cart shopping bag"}</p>
             <MdShoppingBag size={18} className="text-[var(--color-white)]" />
           </div>
-          <div className="flex items-center justify-center w-[34px] xs:w-[36px] sm:w-[38px] md:w-[40px] aspect-square rounded-lg bg-[var(--color-white)] border border-[var(--color-grey)] cursor-pointer" onClick={handleToggleLike} >
+          <div className="flex items-center justify-center w-[34px] xs:w-[36px] sm:w-[38px] md:w-[40px] aspect-square rounded-lg bg-[var(--color-white)] border border-[var(--color-grey)] cursor-pointer" onClick={handleOnClickAddItem} >
             {islike ? <FaHeart size={18} className="text-[var(--color-pink)]" /> : <FaRegHeart size={18} className="text-[var(--color-dark)]" />}
           </div>
         </div>
