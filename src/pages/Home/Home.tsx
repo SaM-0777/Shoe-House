@@ -4,27 +4,42 @@ import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 import { MdShoppingBag } from "react-icons/md";
 import { FaRegHeart } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
+
+import { useDispatch, useSelector } from "react-redux";
+import { addItem, selectCartItems } from "../../store/slices/cartItemSlice";
 
 import { Sidebar } from "../../containers";
-
-import { motion, AnimatePresence } from "framer-motion";
 
 import shoeImg from "../../assets/images/shoe-2.jpg";
 import "./home.scss";
 
 
-const sizes = [
-  3,4,5,7,8,9,10
-]
+export interface IProduct {
+  id: string,
+  name: string,
+  price: number,
+  sizes: number[],
+  productImageUri: string,
+};
 
 export default function Home() {
+  const cartItemDispatch = useDispatch()
+  const itemsInCart = useSelector(selectCartItems)
+  const [product, setProduct] = useState<IProduct>({
+    id: '1',
+    name: 'UwU Shoes',
+    price: 90,
+    sizes: [3, 4, 5, 7, 8, 9, 10],
+    productImageUri: shoeImg
+  })
   const [isStyleDetailsVisible, setIsStyleDetailsVisible] = useState<boolean>(false)
   const [isSizeAndFitVisible, setIsSizeAndFitVisible] = useState<boolean>(false)
   const [isUserReviewVisible, setIsUserReviewVisible] = useState<boolean>(false)
   const [isSidebarVisible, setIsSidebarVisible] = useState<boolean>(false)
   const [islike, setLike] = useState<boolean>(false)
   const [isSizeChartVisible, setIsSizeChartVisible] = useState<boolean>(false)
-  const [selectedSizeIndex, setSelectedSizeIndex] = useState<number>(0)
+  const [selectedSizeIndex, setSelectedSizeIndex] = useState<number>(-1)
 
   function handleToggleExpandStyleDetails() {
     setIsSizeAndFitVisible(false)
@@ -48,6 +63,17 @@ export default function Home() {
     setIsSizeChartVisible(prevState => !prevState)
   }
 
+  function handleOnClickAddItem() {
+    cartItemDispatch(addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      productImageUri: product.productImageUri,
+      quantity: 1
+    }))
+    setIsSidebarVisible(true)
+  }
+
   return (
     <div className="w-full h-full md:flex justify-center items-center overflow-x-hidden" >
       <AnimatePresence>
@@ -62,26 +88,26 @@ export default function Home() {
           <div className="absolute top-5 right-5 cursor-pointer" >
             <BsZoomIn size={16} className="text-[var(--color-grey)] hover:text-[var(--color-dark)]" />
           </div>
-          <img src={shoeImg} alt="" className="w-[70%] h-full object-contain" />
+          <img src={product.productImageUri} alt="" className="w-[70%] h-full object-contain" />
         </div>
       </div>
       <div className="w-[90%] md:w-1/2 h-full pt-10 md:pt-14 px-6 xs:px-8 sm:px-10 md:px-0" >
         <div className="" >
-          <h1 className="app__home-secondary-text text-[1.5rem] md:text-[1.25rem] font-semibold underline" >UwU Shoes</h1>
+          <h1 className="app__home-secondary-text text-[1.5rem] md:text-[1.25rem] font-semibold underline" >{product.name}</h1>
           <p className="app__home-tertiary-text text-[1rem] font-regular text-[var(--color-grey)]" >By Kairen</p>
         </div>
         <p className="app__home-tertiary-text text-[1rem] font-regular text-[var(--color-grey)] mt-4 sm:mt-6 md:mt-10" >Lace Up Low-Top Sneakers</p>
-        <h1 className="app__home-secondary-text text-[1.75rem] my-6" >$90</h1>
+        <h1 className="app__home-secondary-text text-[1.75rem] my-6" >${product.price}</h1>
         <div className="w-3/4 md:w-1/2 border-[1px] rounded-lg border-[var(--color-lighter)] cursor-pointer py-2 px-2 mb-5" >
           <div className="flex items-center gap-2 md:gap-3" onClick={handleToggleSizeChartView} >
-            <p className="app__home-tertiary-text text-[0.8rem] xs:text-[0.875rem] md:text-[0.6rem] lg:text-[0.85rem] font-regular text-[var(--color-dark)]" >Choose your size</p>
-            {isStyleDetailsVisible ? <IoIosArrowUp size={18} className="text-[var(--color-dark)]" /> : <IoIosArrowDown size={18} className="text-[var(--color-dark)]" />}
+            <p className="app__home-tertiary-text text-[0.8rem] xs:text-[0.875rem] md:text-[0.6rem] lg:text-[0.85rem] font-regular text-[var(--color-dark)]" >{product.sizes[selectedSizeIndex] ? product.sizes[selectedSizeIndex].toString() : "Choose your size"}</p>
+            {isSizeChartVisible ? <IoIosArrowUp size={18} className="text-[var(--color-dark)]" /> : <IoIosArrowDown size={18} className="text-[var(--color-dark)]" />}
           </div>
           <AnimatePresence>
             {isSizeChartVisible && (
               <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="" >
                 <div className="flex items-center justify-start gap-2 flex-wrap pt-5" >
-                  {sizes.map((i, index) => (
+                  {product.sizes.map((i, index) => (
                     <div key={index.toString()} className={`${selectedSizeIndex === index ? "bg-[var(--color-dark)]" : "bg-[var(--color-lighter)]"} w-[40px] flex items-center justify-center aspect-square rounded-lg`} onClick={() => setSelectedSizeIndex(index)} >
                       <p className={`app__home-tertiary-text text-[0.8rem] xs:text-[0.875rem] md:text-[0.6rem] lg:text-[0.85rem] font-semibold ${selectedSizeIndex === index ? "text-[var(--color-white)]" : "text-[var(--color-dark)]"}`} >{i.toString()}</p>
                     </div>
@@ -92,8 +118,8 @@ export default function Home() {
           </AnimatePresence>
         </div>
         <div className="flex items-center gap-2 md:gap-3" >
-          <div className="flex items-center justify-between w-3/4 md:w-1/2 py-2 px-2 rounded-lg bg-[var(--color-dark)] cursor-pointer" onClick={() => setIsSidebarVisible(true)} >
-            <p className="app__home-tertiary-text text-[0.8rem] xs:text-[0.875rem] md:text-[0.6rem] lg:text-[0.85rem] font-regular text-[var(--color-white)] uppercase" >Add to cart shopping bag</p>
+          <div className="flex items-center justify-between w-3/4 md:w-1/2 py-2 px-2 rounded-lg bg-[var(--color-dark)] cursor-pointer" onClick={itemsInCart.find(item => item.id === product.id) ? () => setIsSidebarVisible(prevState => !prevState) : handleOnClickAddItem} >
+            <p className="app__home-tertiary-text text-[0.8rem] xs:text-[0.875rem] md:text-[0.6rem] lg:text-[0.85rem] font-regular text-[var(--color-white)] uppercase" >{itemsInCart.find(item => item.id === product.id) ? "Added to Cart" : "Add to cart shopping bag"}</p>
             <MdShoppingBag size={18} className="text-[var(--color-white)]" />
           </div>
           <div className="flex items-center justify-center w-[34px] xs:w-[36px] sm:w-[38px] md:w-[40px] aspect-square rounded-lg bg-[var(--color-white)] border border-[var(--color-grey)] cursor-pointer" onClick={handleToggleLike} >
