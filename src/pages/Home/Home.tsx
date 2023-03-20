@@ -39,6 +39,7 @@ export default function Home() {
   const [isSidebarVisible, setIsSidebarVisible] = useState<boolean>(false)
   const [islike, setLike] = useState<boolean>(false)
   const [isSizeChartVisible, setIsSizeChartVisible] = useState<boolean>(false)
+  const [isError, setIsError] = useState<boolean>(false)
   const [selectedSizeIndex, setSelectedSizeIndex] = useState<number>(-1)
 
   function handleToggleExpandStyleDetails() {
@@ -64,25 +65,30 @@ export default function Home() {
   }
 
   function handleOnClickAddItem() {
-    if (itemsInCart.find(item => item.id === product.id)) {
-      cartItemDispatch(removeItem({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        productImageUri: product.productImageUri,
-        quantity: 1
-      }))
+    if (!(selectedSizeIndex >= 0)) {
+      setIsError(true)
     } else {
-      cartItemDispatch(addItem({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        productImageUri: product.productImageUri,
-        quantity: 1
-      }))
-      setIsSidebarVisible(true)
+      setIsError(false)
+      if (itemsInCart.find(item => item.id === product.id)) {
+        cartItemDispatch(removeItem({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          productImageUri: product.productImageUri,
+          quantity: 1
+        }))
+      } else {
+        cartItemDispatch(addItem({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          productImageUri: product.productImageUri,
+          quantity: 1
+        }))
+        setIsSidebarVisible(true)
+      }
+      handleToggleLike()
     }
-    handleToggleLike()
   }
 
   return (
@@ -109,7 +115,7 @@ export default function Home() {
         </div>
         <p className="app__home-tertiary-text text-[1rem] font-regular text-[var(--color-grey)] mt-4 sm:mt-6 md:mt-10" >Lace Up Low-Top Sneakers</p>
         <h1 className="app__home-secondary-text text-[1.75rem] my-6" >${product.price}</h1>
-        <div className="w-3/4 md:w-1/2 border-[1px] rounded-lg border-[var(--color-lighter)] cursor-pointer py-2 px-2 mb-5" >
+        <div className={`w-3/4 md:w-1/2 border-[1px] rounded-lg ${isError ? "border-[var(--color-pink)]" : "border-[var(--color-lighter)]"} cursor-pointer py-2 px-2 mb-5`} >
           <div className="flex items-center gap-2 md:gap-3" onClick={handleToggleSizeChartView} >
             <p className="app__home-tertiary-text text-[0.8rem] xs:text-[0.875rem] md:text-[0.6rem] lg:text-[0.85rem] font-regular text-[var(--color-dark)]" >{product.sizes[selectedSizeIndex] ? product.sizes[selectedSizeIndex].toString() : "Choose your size"}</p>
             {isSizeChartVisible ? <IoIosArrowUp size={18} className="text-[var(--color-dark)]" /> : <IoIosArrowDown size={18} className="text-[var(--color-dark)]" />}
